@@ -36,6 +36,7 @@ RUN mkdir -p /tmp/bitnami/pkg/cache/ ; cd /tmp/bitnami/pkg/cache/ ; \
       "kafka-3.6.2-3-linux-${OS_ARCH}-debian-12" \
     ) ; \
     for COMPONENT in "${COMPONENTS[@]}"; do \
+      if [ $COMPONENT == kafka* ]; then cp /home/bosser/opt/git-projects/bosser/kafka/core/build/distributions/kafka_2.13-3.6.2-bosser.tgz $COMPONENT; sha256sum ${COMPONENT} > ${COMPONENT}.sha256; fi ; \
       if [ ! -f "${COMPONENT}.tar.gz" ]; then \
         curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz" -O ; \
         curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz.sha256" -O ; \
