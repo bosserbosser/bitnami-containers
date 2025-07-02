@@ -36,13 +36,21 @@ RUN mkdir -p /tmp/bitnami/pkg/cache/ ; cd /tmp/bitnami/pkg/cache/ ; \
       "kafka-3.6.2-3-linux-${OS_ARCH}-debian-12" \
     ) ; \
     for COMPONENT in "${COMPONENTS[@]}"; do \
-      if [ $COMPONENT == kafka* ]; then cp /home/bosser/opt/git-projects/bosser/kafka/core/build/distributions/kafka_2.13-3.6.2-bosser.tgz $COMPONENT; sha256sum ${COMPONENT} > ${COMPONENT}.sha256; fi ; \
+      IS_COMPONENT_KFK=$([[ ${COMPONENT} == kafka* ]] && echo true || echo false) ; \
+      if $IS_COMPONENT_KFK; then \
+        curl -o ${COMPONENT}.tar.gz http://172.16.0.7/bosser/kafka-repo/3.6.2-bosser/kafka_2.13-3.6.2-bosser.tgz ; \
+        sha256sum ${COMPONENT}.tar.gz > ${COMPONENT}.tar.gz.sha256; \
+      fi ; \
       if [ ! -f "${COMPONENT}.tar.gz" ]; then \
         curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz" -O ; \
         curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz.sha256" -O ; \
       fi ; \
       sha256sum -c "${COMPONENT}.tar.gz.sha256" ; \
-      tar -zxf "${COMPONENT}.tar.gz" -C /opt/bitnami --strip-components=2 --no-same-owner --wildcards '*/files' ; \
+      if $IS_COMPONENT_KFK; then \
+		tar -zxf "${COMPONENT}.tar.gz" -C /opt/bitnami --no-same-owner --transform="s+kafka[^/]*+kafka+" ; \
+      else \
+        tar -zxf "${COMPONENT}.tar.gz" -C /opt/bitnami --strip-components=2 --no-same-owner --wildcards '*/files' ; \
+      fi ; \
       rm -rf "${COMPONENT}".tar.gz{,.sha256} ; \
     done
 RUN apt-get update && apt-get upgrade -y && \
