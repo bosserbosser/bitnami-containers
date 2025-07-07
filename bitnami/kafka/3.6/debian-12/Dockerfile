@@ -42,8 +42,10 @@ RUN mkdir -p /tmp/bitnami/pkg/cache/ ; cd /tmp/bitnami/pkg/cache/ ; \
         sha256sum ${COMPONENT}.tar.gz > ${COMPONENT}.tar.gz.sha256; \
       fi ; \
       if [ ! -f "${COMPONENT}.tar.gz" ]; then \
-        curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz" -O ; \
-        curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz.sha256" -O ; \
+        #curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz" -O ; \
+        #curl -SsLf "https://${DOWNLOADS_URL}/${COMPONENT}.tar.gz.sha256" -O ; \
+        curl -SsLf "http://172.16.0.7/bosser/downloads.bitnami.com/files/stacksmith/${COMPONENT}.tar.gz" -O ; \
+        curl -SsLf "http://172.16.0.7/bosser/downloads.bitnami.com/files/stacksmith/${COMPONENT}.tar.gz.sha256" -O ; \
       fi ; \
       sha256sum -c "${COMPONENT}.tar.gz.sha256" ; \
       if $IS_COMPONENT_KFK; then \
